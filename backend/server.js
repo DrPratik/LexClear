@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -36,6 +37,13 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api', apiRoutes);
+
+// Serve static frontend files in production
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+});
 
 if (require.main === module) {
   app.listen(PORT, () => {
