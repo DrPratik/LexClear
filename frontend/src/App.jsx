@@ -67,7 +67,8 @@ function App() {
       </div>
       
       <div className="container">
-        <header>
+        <header style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '3rem' }}>
+          <img src="/logo.jpg" alt="LexClear AI Logo" style={{ width: '80px', height: '80px', borderRadius: '20px', marginBottom: '1rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} />
           <h1>LexClear AI</h1>
           <p>Deep Semantic Document Risk Analysis</p>
         </header>
