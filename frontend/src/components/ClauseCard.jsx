@@ -8,8 +8,9 @@ const ClauseCard = React.memo(function ClauseCard({ clause }) {
   const handleNegotiate = async () => {
     setLoadingProposal(true);
     try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const originalClause = evidence && evidence.length > 0 ? evidence.join(" ") : title;
-      const res = await fetch('http://localhost:3001/api/negotiate', {
+      const res = await fetch(`${apiUrl}/api/negotiate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ originalClause, riskReason: explanation })

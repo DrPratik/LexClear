@@ -26,7 +26,8 @@ export default function ChatPanel({ leaseText }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3001/api/ask', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/api/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userMsg, text: leaseText })
