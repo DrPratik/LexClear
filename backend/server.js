@@ -5,7 +5,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
-const hpp = require('hpp');
 const apiRoutes = require('./routes/api');
 
 const app = express();
@@ -28,6 +27,8 @@ app.use(helmet({
   },
 }));
 
+app.set('trust proxy', 1); // Trust Render's reverse proxy for rate limiting
+
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -46,10 +47,7 @@ app.use(cors({
 }));
 
 // Parse JSON payloads with a strict size limit
-app.use(express.json({ limit: '2mb' }));
-
-// Security: HTTP Parameter Pollution protection
-app.use(hpp());
+app.use(express.json({ limit: '5mb' }));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -71,8 +69,12 @@ app.get(/(.*)/, (req, res) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("Global Error Handler caught:", err.message);
-  res.status(500).json({ error: "An internal server error occurred. Please try again later." });
+  console.error("Global Error Handler caught:", err);
+  const status = err.status || 500;
+  res.status(status).json({ 
+    error: err.message, 
+    stack: err.stack 
+  });
 });
 
 if (require.main === module) {
