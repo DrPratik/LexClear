@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { analyzeFullLease, answerQuestion, generateCounterProposal } = require('../services/gemini');
+const { analyzeFullLease, answerQuestion, generateCounterProposal, generateRevisedDocument } = require('../services/gemini');
 
 // In-memory state
 let currentLeaseText = "";
@@ -79,6 +79,19 @@ router.post('/negotiate', async (req, res) => {
     res.json(proposal);
   } catch (err) {
     res.status(500).json({ error: "Failed to generate counter-proposal." });
+  }
+});
+router.post('/revise', async (req, res) => {
+  const { text } = req.body;
+  if (!text || typeof text !== 'string') {
+    return res.status(400).json({ error: "Valid original lease text is required." });
+  }
+
+  try {
+    const revisedText = await generateRevisedDocument(text);
+    res.json({ revisedText });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to generate revised document." });
   }
 });
 

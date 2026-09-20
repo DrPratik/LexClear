@@ -6,12 +6,16 @@ import ChatPanel from './components/ChatPanel';
 import PriorityActions from './components/PriorityActions';
 import LawyerExport from './components/LawyerExport';
 import CompareDashboard from './components/CompareDashboard';
+import RevisedDraftModal from './components/RevisedDraftModal';
 
 function App() {
   const [analysis, setAnalysis] = useState(null);
   const [comparison, setComparison] = useState(null);
   const [leaseText, setLeaseText] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
+  const [revisedDraft, setRevisedDraft] = useState(null);
+  const [revising, setRevising] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAnalyze = async (text) => {
     setAnalyzing(true);
@@ -34,6 +38,30 @@ function App() {
       alert("Failed to analyze document.");
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleReviseDraft = async () => {
+    setRevising(true);
+    try {
+      const apiUrl = import.meta.env.PROD ? '' : 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/revise`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: leaseText })
+      });
+      const data = await response.json();
+      if (data.error) {
+        alert("Revision Error: " + data.error);
+        return;
+      }
+      setRevisedDraft(data.revisedText);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Revision failed:", error);
+      alert("Failed to generate revised document.");
+    } finally {
+      setRevising(false);
     }
   };
 
@@ -107,13 +135,31 @@ function App() {
                 ))}
               </div>
               <div className="side-panel">
-                <LawyerExport analysis={analysis} leaseText={leaseText} />
+                <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={handleReviseDraft} 
+                    disabled={revising}
+                    style={{ width: '100%', padding: '1rem', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', fontWeight: 'bold' }}
+                  >
+                    {revising ? "Compiling Draft..." : "Compile Suggested Draft"}
+                  </button>
+                  <LawyerExport analysis={analysis} leaseText={leaseText} />
+                </div>
                 <PriorityActions actions={analysis.priority_actions} />
                 <div style={{marginTop: '2rem'}}>
                   <ChatPanel leaseText={leaseText} />
                 </div>
               </div>
             </div>
+            
+            <RevisedDraftModal 
+              isOpen={isModalOpen} 
+              onClose={() => setIsModalOpen(false)} 
+              revisedText={revisedDraft} 
+              originalText={leaseText}
+              onCompare={handleCompare}
+            />
           </div>
         )}
       </div>

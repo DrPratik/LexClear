@@ -423,9 +423,48 @@ INSTRUCTIONS:
   }
 }
 
+/**
+ * Generates a fully revised, balanced version of the entire legal document.
+ * 
+ * @param {string} originalText - The original lease document text.
+ * @returns {Promise<string>} The revised document in Markdown format.
+ * @throws {Error} If the Gemini API fails.
+ */
+async function generateRevisedDocument(originalText) {
+  const prompt = `
+You are an expert, highly analytical legal drafter representing a tenant or client.
+Your goal is to rewrite the provided legal document (e.g., lease agreement) to make it fair and balanced.
+
+INSTRUCTIONS:
+1. Output the ENTIRE document from start to finish.
+2. Keep all core business terms (rent amounts, dates, names, property addresses) EXACTLY as they are. Do not change the economics.
+3. Identify highly punitive, unfair, or unilateral clauses (e.g., "sole discretion of the landlord", unreasonable early termination penalties, forfeiture of deposits regardless of cause, tenant responsible for structural repairs) and REWRITE them to be mutually fair and balanced.
+4. Format the output cleanly in Markdown (using # for headers, etc.). Do not wrap it in JSON. Just return the raw Markdown text.
+
+--- ORIGINAL DOCUMENT ---
+${originalText}
+`;
+
+  try {
+    const reviseModel = genAI.getGenerativeModel({
+      model: "gemini-3.1-flash-lite",
+      generationConfig: {
+        temperature: 0.2
+      }
+    });
+
+    const result = await reviseModel.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error("Gemini API Error (generateRevisedDocument):", error);
+    throw error;
+  }
+}
+
 module.exports = {
   analyzeFullLease,
   answerQuestion,
   compareLeases,
-  generateCounterProposal
+  generateCounterProposal,
+  generateRevisedDocument
 };
