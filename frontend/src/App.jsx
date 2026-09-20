@@ -101,10 +101,29 @@ function App() {
           <p>Deep Semantic Document Risk Analysis</p>
         </header>
 
-        {comparison ? (
+        {analyzing ? (
+          <div className="card" style={{ maxWidth: '600px', margin: '2rem auto' }}>
+            <div className="scanner-container">
+              <div className="document-icon">
+                <div className="scanner-beam"></div>
+                <div className="document-line"></div>
+                <div className="document-line"></div>
+                <div className="document-line"></div>
+                <div className="document-line"></div>
+                <div className="document-line"></div>
+              </div>
+              <div className="loading-text">
+                Processing document...
+              </div>
+              <div className="loading-subtext">
+                Extracting clauses, identifying risks, and generating insights with Gemini...
+              </div>
+            </div>
+          </div>
+        ) : comparison ? (
           <CompareDashboard comparison={comparison} onReset={() => setComparison(null)} />
         ) : !analysis ? (
-          <UploadForm onAnalyze={handleAnalyze} onCompare={handleCompare} isLoading={analyzing} />
+          <UploadForm onAnalyze={handleAnalyze} onCompare={handleCompare} isLoading={false} />
         ) : (
           <div>
             <div className={`card risk-${analysis.overall_risk.level} dashboard-summary`}>
