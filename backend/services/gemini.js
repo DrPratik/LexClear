@@ -108,7 +108,7 @@ const responseSchema = {
 };
 
 const model = genAI.getGenerativeModel({ 
-  model: "gemini-2.5-flash",
+  model: "gemini-3.1-flash-lite",
   generationConfig: {
     responseMimeType: "application/json",
     responseSchema: responseSchema,
@@ -260,7 +260,7 @@ INSTRUCTIONS:
 `;
 
   try {
-    const qModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const qModel = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
     const result = await qModel.generateContent(prompt);
     const answer = result.response.text();
     
@@ -343,7 +343,7 @@ ${revisedText}
 
   try {
     const compareModel = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.1-flash-lite",
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: comparisonSchema,
@@ -407,7 +407,7 @@ INSTRUCTIONS:
 
   try {
     const copilotModel = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.1-flash-lite",
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: negotiationSchema,
