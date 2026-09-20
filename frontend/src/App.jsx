@@ -17,7 +17,7 @@ function App() {
     setAnalyzing(true);
     setLeaseText(text); // Save raw text for stateless Q&A
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.PROD ? '' : 'http://localhost:3001';
       const response = await fetch(`${apiUrl}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,7 +40,7 @@ function App() {
   const handleCompare = async (original, revised) => {
     setAnalyzing(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.PROD ? '' : 'http://localhost:3001';
       const response = await fetch(`${apiUrl}/api/compare`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

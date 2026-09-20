@@ -8,7 +8,7 @@ const ClauseCard = React.memo(function ClauseCard({ clause }) {
   const handleNegotiate = async () => {
     setLoadingProposal(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.PROD ? '' : 'http://localhost:3001';
       const originalClause = evidence && evidence.length > 0 ? evidence.join(" ") : title;
       const res = await fetch(`${apiUrl}/api/negotiate`, {
         method: 'POST',
