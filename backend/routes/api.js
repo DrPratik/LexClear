@@ -22,16 +22,12 @@ router.post('/analyze', async (req, res) => {
     currentAnalysis = analysis;
     res.json(analysis);
   } catch (err) {
-    console.error("Error analyzing lease:", err);
     res.status(500).json({ error: "Analysis failed." });
   }
 });
 
 router.post('/ask', async (req, res) => {
   const { question, text } = req.body;
-  console.log("--- ASK ENDPOINT ---");
-  console.log("Question:", question);
-  console.log("Text length provided by frontend:", text ? text.length : 0);
   
   if (!question || typeof question !== 'string') {
     return res.status(400).json({ error: "Valid question is required." });
@@ -42,7 +38,6 @@ router.post('/ask', async (req, res) => {
 
   // Use the text provided from the frontend, fallback to in-memory if empty
   const contextText = text || currentLeaseText;
-  console.log("Context text length used:", contextText ? contextText.length : 0);
 
   if (!contextText) {
     return res.status(400).json({ error: "Lease context is missing. Please analyze a document first." });
@@ -69,7 +64,6 @@ router.post('/compare', async (req, res) => {
     const comparison = await require('../services/gemini').compareLeases(original, revised);
     res.json(comparison);
   } catch (err) {
-    console.error("Error comparing leases:", err);
     res.status(500).json({ error: "Comparison failed." });
   }
 });
@@ -84,7 +78,6 @@ router.post('/negotiate', async (req, res) => {
     const proposal = await generateCounterProposal(originalClause, riskReason);
     res.json(proposal);
   } catch (err) {
-    console.error("Error generating counter-proposal:", err);
     res.status(500).json({ error: "Failed to generate counter-proposal." });
   }
 });
